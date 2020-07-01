@@ -1,0 +1,80 @@
+{% extends 'dataProcess/base.html' %}
+
+
+{% block header %}
+
+  {# Include FontAwesome; required for icon display #}
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css">
+
+  {# Include Bootstrap 4 and jQuery #}
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+  {# Django Tempus Dominus assets are included in `{{ form.media }}` #}
+  {{ form.media }}
+
+  {% load static %}
+
+  <link rel="stylesheet" href="{% static 'dataProcess/obsStList.css' %}">
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+  {% endblock header %}
+
+{% block content %}
+
+  <h1 class='text-center'>EPA OBS Station</h1>
+
+  <hr>
+
+  <form method='post'>
+  {% csrf_token %}
+
+  <div class="form-group">
+    <label for="sel1">物種選擇:</label>
+    <select multiple class="form-control" name="spec">
+      <option>no</option>
+      <option>no2</option>
+      <option>nox</option>
+      <option>o3</option>
+      <option>pm10</option>
+      <option>pm25</option>
+      <option>so2</option>
+      <option>thc</option>
+      <option>nmhc</option>
+    </select>
+  </div>
+
+  <hr>
+  {% for stlist in stlists %}
+      <div class="form-check-inline stBox">
+          <label class="form-check-label">
+              <input type="checkbox" class="form-check-input" value="{{stlist.stid}}" name='stID'>{{stlist.county}}-{{stlist.ch_name}}
+          </label>
+      </div>
+  {% endfor %}
+  <hr>
+
+  <div class="row">
+    <div class='col-md-6'>{{ form.date_field1.label }}{{ form.date_field1 }}</div>
+    <div class='col-md-6'>{{ form.date_field2.label }}{{ form.date_field2 }}</div>
+  </div>
+
+  <hr>
+  {% if error %}
+    <div class="alert alert-warning" role="alert">
+      {{ error }}
+    </div>
+  {% endif %}
+  <input type='submit' value='submit' class='btn btn-primary btn-block'>
+  </form>
+
+  <hr>
+
+  {% autoescape off %}
+ 
+    {{ plot_div }}
+
+  {% endautoescape %}
+
+{% endblock content %}
